@@ -5,31 +5,6 @@ from typing import List, Optional, Tuple
 class ArbitraryModel(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-class GlobalConfig(ArbitraryModel):
-    n_dim: int = 10
-    n_objectives: int = 2
-    n_constraints: int = 0
-    
-    lower_bound: Optional[np.ndarray] = None
-    upper_bound: Optional[np.ndarray] = None
-
-    @model_validator(mode='after')
-    def set_default_bounds(self):
-        if self.lower_bound is None:
-            self.lower_bound = np.zeros(self.n_dim)
-        if self.upper_bound is None:
-            self.upper_bound = np.ones(self.n_dim)
-            
-        if len(self.lower_bound) != self.n_dim:
-            raise ValueError(f"Lower bound length {len(self.lower_bound)} != n_dim {self.n_dim}")
-        if len(self.upper_bound) != self.n_dim:
-            raise ValueError(f"Upper bound length {len(self.upper_bound)} != n_dim {self.n_dim}")
-            
-        return self
-    @property
-    def samples_per_step(self) -> int:
-        return self.n_dim + 1
-
 class TankConfig(ArbitraryModel):
     tank_id: int
     objective_weights: np.ndarray
